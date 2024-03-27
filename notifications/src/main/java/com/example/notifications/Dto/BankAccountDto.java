@@ -12,9 +12,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BankAccountDto {
     private  Long id;
-    private double accountNo;
-    private  String bankName;
-    private boolean isActive ;
-    private String currency;
+    private String glCode;
+    private  String name;
+    private String accountType ;
+    private String accountUsage;
+    private String usedAs ;
     private double balance ;
+    private Long userId ;
+    private boolean disabled ;
+    private String manualEntriesAllowed ;
 }

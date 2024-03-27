@@ -39,9 +39,11 @@ public class Company {
     private  double salesGrowthRatio ;
     @Column(name = "profitabilityRatio")
     private  double profitabilityRatio ;
-    @Column(name = "RIB")
-    private  double RIB ;
 
+    @Column(name = "RIB", unique = true)
+    private  double RIB ;
+    @Column(name = "Balance")
+    private  double Balance ;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<Investment> investments = new ArrayList<>();

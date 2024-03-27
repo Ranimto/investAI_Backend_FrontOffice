@@ -23,4 +23,5 @@ public class CompanyDto {
     private  double salesGrowthRatio ;
     private  double profitabilityRatio ;
     private  double RIB ;
+    private  double Balance ;
 }

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
@@ -45,6 +46,13 @@ public class UserController {
     public ResponseEntity<UserDto> findUserByEmail(@PathVariable("email") String email) {
         UserDto userDto = userService.findUserByEmail(email);
             return new ResponseEntity<>(userDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/findByVerificationCode/{verificationCode}")
+    //@PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserDto> findByVerificationCode(@PathVariable("verificationCode") String verificationCode) {
+        UserDto userDto = userService.findUserByVerificationCode(verificationCode);
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
     //ADMIN token : eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUb3VtaUBnbWFpbC5jb20iLCJpYXQiOjE3MDEzOTAwOTAsImV4cCI6MTcwMTM5MTUzMH0.CIY3scC9Sb09QM2aBsrQ8RGqwbvYJdPJcyn8sk2-QDA

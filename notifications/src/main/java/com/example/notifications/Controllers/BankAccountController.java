@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/BankAccount")
+@RequestMapping("/bankAccount")
 @RequiredArgsConstructor
 public class BankAccountController {
  private final BankAccountServiceImpl bankAccountServiceImpl;
@@ -25,8 +25,20 @@ public class BankAccountController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    @GetMapping("findFromFineract/{id}")
+    public ResponseEntity<BankAccountDto> findBankAccountByIdFromFineract(@PathVariable("id") Long id) {
+       BankAccountDto bankAccountDto = bankAccountServiceImpl.findBankAccByIdFromFineract(id);
+            return new ResponseEntity<>(bankAccountDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllFromFineract")
+    public ResponseEntity<List<BankAccountDto>> getAllAccountsFromFineract() {
+        List<BankAccountDto> bankAccounts = bankAccountServiceImpl.getAllBankAccFromFineract();
+        return new ResponseEntity<>(bankAccounts, HttpStatus.OK);
+    }
+
     @GetMapping("/getAll")
-    public ResponseEntity<List<BankAccountDto>> getAllCompanies() {
+    public ResponseEntity<List<BankAccountDto>> getAllAccounts() {
         List<BankAccountDto> bankAccounts = bankAccountServiceImpl.getAllBankAcc();
         return new ResponseEntity<>(bankAccounts, HttpStatus.OK);
     }
@@ -53,4 +65,9 @@ public class BankAccountController {
         }
     }
 
+    @GetMapping("getBankAccountByInvestor/{investorId}")
+    public ResponseEntity<List<BankAccountDto>> getBankAccountsByInvestorId(@PathVariable Long investorId) {
+        List<BankAccountDto> bankAccountsDto= bankAccountServiceImpl. getBankAccountByInvestorId(investorId);
+        return ResponseEntity.ok(bankAccountsDto);
+    }
 }

@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -17,21 +20,29 @@ public class BankAccount {
     @SequenceGenerator(name = "generator", sequenceName = "BANK_ACCOUNT_SEQUENCE" , allocationSize = 1)
     private  Long id;
 
-    @Column(name = "accountNo")
-    private double accountNo;
-    @Column(name = "bankName")
-    private  String bankName;
-    @Column(name = "isActive")
-    private boolean isActive ;
-    @Column(name = "currency")
-    private String currency;
+    @Column(name = "glCode")
+    private String glCode;
+    @Column(name = "name")
+    private String name ;
+    @Column(name = "accountType")
+    private  String accountType;
+    @Column(name = "accountUsage")
+    private String accountUsage;
+    @Column(name = "usedAs")
+    private String usedAs;
     @Column(name = "balance")
     private double balance ;
+    @Column(name = "disabled")
+    private boolean disabled ;
+    @Column(name = "manualEntriesAllowed")
+    private String manualEntriesAllowed ;
 
     @ManyToOne
-    @JoinColumn(name = "bank_account_id")
+    @JoinColumn(name = "user_id")
     private AppUser user;
 
+    @OneToMany(mappedBy = "bankAccount",  cascade = CascadeType.ALL)
+    private List<Transaction> transactions = new ArrayList<>();
 
 
 }

@@ -22,6 +22,8 @@ public class UserDto {
     private double phone;
     private String title;
     private String bio ;
+    private double postCode;
+    private String city;
     private String imageUrl;
     private String enabled;
     private LocalDateTime createdAt;

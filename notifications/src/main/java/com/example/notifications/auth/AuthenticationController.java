@@ -1,5 +1,6 @@
 package com.example.notifications.auth;
 
+import com.example.notifications.Dto.UserDto;
 import com.example.notifications.Exception.ApiException;
 import com.example.notifications.Repository.AppUserRepo;
 
@@ -10,11 +11,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -31,13 +34,15 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.register(request, getSiteURL(http), model));
     }
 
+
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
-        AppUser user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new ApiException("User not found"));
-        if (userService.verify(user.getVerificationCode())) {
-            return ResponseEntity.ok(authenticationService.authenticate(request));
+        Optional<AppUser> user = userRepository.findByEmail(request.getEmail());
+        if ( user.get().isEnabled()) {
+            return ResponseEntity.ok(authenticationService.authenticate(request));}
+       else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
-        return null;
 
     }
 

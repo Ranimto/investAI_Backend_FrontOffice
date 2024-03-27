@@ -56,7 +56,7 @@ public class InvestmentController {
         }
     }
 
-    @GetMapping("getInvestor/{investorId}")
+    @GetMapping("getInvest/{investorId}")
     public ResponseEntity<List<InvestmentDto>> getInvestmentsByInvestorId(@PathVariable Long investorId) {
         List<InvestmentDto> investments = investmentService.getInvestsByInvestorId(investorId);
         return ResponseEntity.ok(investments);

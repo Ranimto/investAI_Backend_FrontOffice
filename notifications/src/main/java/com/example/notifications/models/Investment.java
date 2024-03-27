@@ -29,6 +29,8 @@ public class Investment {
     private  double duration ;
     @Column(name = "status")
     private  String status ;
+    @Column(name = "companyName")
+    private  String companyName ;
 
     @ManyToOne
     @MapsId("userId")

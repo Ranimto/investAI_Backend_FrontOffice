@@ -3,6 +3,7 @@ package com.example.notifications.Controllers;
 import com.example.notifications.Dto.CompanyDto;
 
 import com.example.notifications.impl.CompanyServiceImpl;
+import com.example.notifications.models.Company;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,5 +55,31 @@ public class CompanyController {
             companyService.deleteCompany(id);
             return new ResponseEntity<>(HttpStatus.OK);
         }
+    }
+    @GetMapping("/getCompaniesByInvestorId/{investorId}")
+    public ResponseEntity<List<CompanyDto>> getCompaniesByInvestorId(@PathVariable("investorId")Long investorId) {
+        List<CompanyDto> companies = companyService.getCompaniesByInvestor(investorId);
+        return new ResponseEntity<>(companies, HttpStatus.OK);
+    }
+    @GetMapping("/getAllCompaniesExceptByInvestorId/{investorId}")
+    public ResponseEntity<List<CompanyDto>> getAllCompaniesExceptByInvestorId(@PathVariable("investorId")Long investorId) {
+        List<CompanyDto> companies = companyService.getAllCompaniesExceptByInvestorId(investorId);
+        return new ResponseEntity<>(companies, HttpStatus.OK);
+    }
+    @GetMapping("/getCompanyName/{id}")
+    public ResponseEntity<String> getCompanyNameById( @PathVariable("id") Long id) {
+        String Name= companyService.getCompanyNameById(id);
+        return new ResponseEntity<String>(Name, HttpStatus.OK);
+    }
+
+    @GetMapping("/getCompanyByRIB/{RIB}")
+    public ResponseEntity<CompanyDto> getCompanyByRIB( @PathVariable("RIB") double RIB) {
+        CompanyDto company= companyService.getCompanyByRIB(RIB);
+        return new ResponseEntity<>(company, HttpStatus.OK);
+    }
+    @GetMapping("/getCompanyBalanceByRIB/{RIB}")
+    public ResponseEntity<Double> getCompanyBalanceByRIB( @PathVariable("RIB") double RIB) {
+        double balance= companyService.getCompanyBalanceByRIB(RIB);
+        return new ResponseEntity<>(balance, HttpStatus.OK);
     }
 }

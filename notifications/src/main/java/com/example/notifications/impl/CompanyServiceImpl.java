@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 import static com.example.notifications.Exception.ErrorCode.COMPANY_NOT_FOUND;
@@ -57,6 +58,7 @@ public class CompanyServiceImpl implements CompanyService {
             company.setProfitabilityRatio(companyDto.getProfitabilityRatio());
             company.setSalesGrowthRatio(companyDto.getSalesGrowthRatio());
             company.setRIB(companyDto.getRIB());
+            company.setBalance(companyDto.getBalance());
 
             Company updatedCompany = companyRepo.save(company);
             return modelMapper.map(updatedCompany, CompanyDto.class);
@@ -67,5 +69,29 @@ public class CompanyServiceImpl implements CompanyService {
 
     public void deleteCompany(Long id) {
         companyRepo.deleteById(id);
+    }
+
+    public List<CompanyDto> getCompaniesByInvestor(Long investorId){
+        if (investorId==0) return null ;
+        List<Company> companies=companyRepo.getCompaniesByInvestorId(investorId);
+        return companies.stream().map(u -> modelMapper.map(u, CompanyDto.class)).collect(Collectors.toList());
+    }
+
+    public List<CompanyDto> getAllCompaniesExceptByInvestorId(Long investorId){
+        if (investorId==0) return null ;
+        List<Company> companies=companyRepo.getAllCompaniesExceptByInvestorId(investorId);
+        return companies.stream().map(u -> modelMapper.map(u, CompanyDto.class)).collect(Collectors.toList());
+    }
+    public String getCompanyNameById(Long id){
+       return companyRepo.findById(id).get().getName();
+    }
+
+    public  CompanyDto getCompanyByRIB(double RIB){
+        Company company=companyRepo.getCompanyByRIB(RIB);
+        return modelMapper.map(company, CompanyDto.class);
+    }
+
+    public double getCompanyBalanceByRIB(double RIB){
+        return getCompanyByRIB(RIB).getBalance();
     }
 }

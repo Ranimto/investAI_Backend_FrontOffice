@@ -29,6 +29,17 @@ public class ProfileDataController {
         }
     }
 
+    @GetMapping("/findProfile/{investorId}")
+
+    public ResponseEntity<ProfileDataDto> FindProfileDataByInvestorId(@PathVariable("investorId") Long investorId) {
+        Optional<ProfileDataDto> profileDataDto = profileDataService.findProfileDataByInvestorId(investorId);
+        if (profileDataDto.isPresent()) {
+            return new ResponseEntity<>(profileDataDto.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping("/addProfileData")
 
     public ResponseEntity<ProfileDataDto> addProfileData(@RequestBody ProfileDataDto profileDataDto, HttpServletResponse response) {

@@ -16,6 +16,7 @@ public class InvestmentDto {
 
     private Long userId ;
     private Long companyId ;
+    private String companyName ;
     private String type ;
     private double amount ;
     private LocalDateTime startDate ;

@@ -16,7 +16,7 @@ public class RegisterRequest {
     private String email;
     private  String password;
     private double phone;
-    private Role role;
+    private Role role = Role.INVESTOR;
     private  boolean enabled ;
     private String verificationCode ;
 }

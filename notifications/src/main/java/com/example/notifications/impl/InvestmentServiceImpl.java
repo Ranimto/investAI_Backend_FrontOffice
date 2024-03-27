@@ -6,10 +6,12 @@ import com.example.notifications.Repository.InvestmentRepo;
 import com.example.notifications.Services.InvestmentService;
 import com.example.notifications.models.InvestId;
 import com.example.notifications.models.Investment;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,17 @@ import static com.example.notifications.Exception.ErrorCode.INVESTMENT_NOT_FOUND
 public class InvestmentServiceImpl implements InvestmentService {
     private  final InvestmentRepo investmentRepo;
     private final ModelMapper modelMapper;
+   private final CompanyServiceImpl companyService;
+
+    @PostConstruct
+    public void init() {
+        // Configuration du ModelMapper
+        modelMapper.addMappings(new PropertyMap<Investment, InvestmentDto>() {
+            protected void configure() {
+                map().setCompanyName(source.getCompany().getName());
+            }
+        });
+    }
 
     public List<InvestmentDto> getAllInvest(){
         List<Investment> investments=investmentRepo.findAll();
@@ -53,6 +66,7 @@ public class InvestmentServiceImpl implements InvestmentService {
             investment.setStartDate(investmentDto.getStartDate());
             investment.setStatus(investmentDto.getStatus());
             investment.setType(investmentDto.getType());
+            investment.setCompanyName(companyService.getCompanyNameById(investmentDto.getCompanyId()));
             Investment updatedInvest = investmentRepo.save(investment);
             return modelMapper.map(updatedInvest, InvestmentDto.class);
         } else {

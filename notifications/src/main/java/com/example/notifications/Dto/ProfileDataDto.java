@@ -31,5 +31,6 @@ public class ProfileDataDto {
     private String comfortWithFluctuations;
     private String financialRiskComfortLevel;
     private String sourceOfFunds;
+    private Long userId;
 
 }

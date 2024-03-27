@@ -140,14 +140,12 @@ public class UserServiceImpl implements AppUserService {
     public boolean verify(String verificationCode) {
 
         AppUser user = userRepo.findByVerificationCode(verificationCode);
-
         if (user == null || user.isEnabled()) {
             return false;
         } else {
             user.setVerificationCode(null);
             user.setEnabled(true);
             userRepo.save(user);
-
             return true;
         }
     }

@@ -11,10 +11,12 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.internal.bytebuddy.utility.RandomString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,8 +26,10 @@ import org.springframework.ui.Model;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final AppUserRepo userRepository;
@@ -65,7 +69,7 @@ public class AuthenticationService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
-        user.setEnabled(true);
+        user.setEnabled(false);
         user.setPhone(request.getPhone());
         user.setRole(request.getRole());
 
@@ -81,13 +85,9 @@ public class AuthenticationService {
         //send verification code
         userService.sendVerificationEmail(user, siteURL);
         model.addAttribute("page Title", "Registration Succeeded!");
-
-
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build() ;
-
-
     }
 
     // in case if the username or the password is not correct an exception will be thrown
@@ -98,7 +98,6 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();;
         //once i get the user I will generate the token then return the authenticationResponse
 
@@ -111,7 +110,6 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .build();
     }
-
 
     private void saveUserToken(AppUser user, String jwtToken) {
         var token = Token.builder()

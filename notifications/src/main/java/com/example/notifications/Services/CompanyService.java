@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CompanyService {
-    public CompanyDto addCompany(CompanyDto companyDto);
-    public Optional<CompanyDto> findCompanyById(Long id);
-    public List<CompanyDto> getAllCompany();
-    public CompanyDto UpdateCompany(CompanyDto companyDto);
-    public void deleteCompany(Long id);
+    CompanyDto addCompany(CompanyDto companyDto);
+    Optional<CompanyDto> findCompanyById(Long id);
+    List<CompanyDto> getAllCompany();
+    CompanyDto UpdateCompany(CompanyDto companyDto);
+    void deleteCompany(Long id);
+    List<CompanyDto> getCompaniesByInvestor(Long investorId);
+    CompanyDto getCompanyByRIB(double RIB);
+    double getCompanyBalanceByRIB(double RIB);
 }

@@ -49,6 +49,16 @@ public class AppUser implements UserDetails {
     @Column(name = "phone")
     private double phone;
 
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "nationality")
+    private String nationality;
+
+    @Column(name = "postCode")
+    private double postCode;
+
+
     @Column(name = "profession")
     private String profession;
 
@@ -66,7 +76,7 @@ public class AppUser implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private Role role;
+    private Role role = Role.INVESTOR;
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens ;
@@ -82,6 +92,8 @@ public class AppUser implements UserDetails {
 
     @OneToMany(mappedBy = "user",  cascade = CascadeType.ALL)
     private List<ProfileData> profileData = new ArrayList<>();
+
+
 
 
     // all the user's details
@@ -115,9 +127,6 @@ public class AppUser implements UserDetails {
         return true ;
     }
 
-    @Override
-    public boolean isEnabled() {
-        return true ;
-    }
+
 }
 
