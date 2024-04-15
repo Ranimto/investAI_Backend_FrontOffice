@@ -3,7 +3,6 @@ package com.example.notifications.Controllers;
 import com.example.notifications.Dto.CompanyDto;
 
 import com.example.notifications.impl.CompanyServiceImpl;
-import com.example.notifications.models.Company;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

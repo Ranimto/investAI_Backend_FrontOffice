@@ -56,7 +56,7 @@ public class TransactionServiceImpl implements TransactionService {
             Optional<BankAccountDto> bankAccountDto = bankAccountService.findBankAccById(transactionDto.getBankAccountId());
             CompanyDto companyDto=companyService.getCompanyByRIB(RIB);
             companyDto.setBalance(companyDto.getBalance()+ transactionDto.getAmount());
-            bankAccountDto.get().setBalance(bankAccountDto.get().getBalance()-transactionDto.getAmount());
+          //  bankAccountDto.get().setAccountBalance(bankAccountDto.get().getAccountBalance()-transactionDto.getAmount());
         }
     }
 
@@ -66,7 +66,7 @@ public class TransactionServiceImpl implements TransactionService {
             Optional<BankAccountDto> bankAccountDto = bankAccountService.findBankAccById(transactionDto.getBankAccountId());
             CompanyDto companyDto=companyService.getCompanyByRIB(RIB);
             companyDto.setBalance(companyDto.getBalance()-transactionDto.getAmount());
-            bankAccountDto.get().setBalance(bankAccountDto.get().getBalance()+transactionDto.getAmount());
+           // bankAccountDto.get().setAccountBalance(bankAccountDto.get().getAccountBalance()+transactionDto.getAmount());
         }
     }
 

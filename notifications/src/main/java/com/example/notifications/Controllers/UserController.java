@@ -2,24 +2,40 @@ package com.example.notifications.Controllers;
 
 import com.example.notifications.Dto.UserDto;
 
+import com.example.notifications.Exception.ApiException;
 import com.example.notifications.impl.UserServiceImpl;
+import com.example.notifications.models.AppUser;
+import io.jsonwebtoken.io.IOException;
+import jakarta.mail.Quota;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @RestController
-
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
 
+
     private final UserServiceImpl userService;
+    private  final  String uploadDir="src/main/resources/imagesstock/" ;
 
     @GetMapping("/allUsers")
     //@PreAuthorize("hasRole('ADMIN')")
@@ -90,4 +106,55 @@ public class UserController {
         boolean res = userService.isInvestor(id);
             return new ResponseEntity<Boolean>(res, HttpStatus.OK);
     }
+
+    @PutMapping("update-profile/{userId}")
+    public ResponseEntity<AppUser> updateUserProfile(@PathVariable Long userId, @RequestParam("profileImage") MultipartFile profileImage) {
+        try {
+            AppUser updatedUser = userService.updateUserProfile(userId, profileImage);
+            return ResponseEntity.ok(updatedUser);
+
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating user profile", e);
+             }
+    }
+
+   public  String determineContentType(String filename) {
+        String[] parts=filename.split("\\.");
+        if (parts.length>1){
+            String extension =parts[parts.length-1].toLowerCase();
+            switch (extension){
+                case "jpg" :
+                case "jpeg": return "images/jpeg" ;
+                case "png": return "images/png";
+                default: return  "images/*" ;
+            }
+        }
+
+      return  "images/*" ;
+   }
+   @GetMapping("images/{filename}")
+   public ResponseEntity<Resource> serveImage(@PathVariable String filename){
+        try{
+            Path imagePath= Paths.get(uploadDir).resolve((filename));
+            Resource imageFile=new UrlResource(imagePath.toUri());
+
+            if(imageFile.exists()&& imageFile.isReadable()){
+                String contentType=determineContentType(filename);
+                HttpHeaders headers=new HttpHeaders();
+                headers.setContentType(org.springframework.http.MediaType.parseMediaType((contentType)));
+                return ResponseEntity.ok().headers(headers).body(imageFile);
+                }
+            else{
+                return  ResponseEntity.notFound().build();
+            }
+
+        } catch (MalformedURLException e) {
+            return ResponseEntity.status(500).body(null);
+        }
+   }
+
+
+
+
+
 }

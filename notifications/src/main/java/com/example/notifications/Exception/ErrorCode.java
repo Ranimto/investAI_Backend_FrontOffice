@@ -21,8 +21,14 @@ public enum ErrorCode {
     PROFILE_DATA_ALREADY_EXISTS(312, "profile data already exists"),
 
     USER_NOT_FOUND(313,"user not found" ),
+    EMAIL_ALREADY_EXISTS(313,"user not found" ),
     USER_NOT_VALID(314, "user not valid"),
-    USER_ALREADY_EXISTS(315, "user already exists");
+    USER_ALREADY_EXISTS(315, "user already exists"),
+
+    REQUEST_ACCOUNT_NOT_FOUND(316,"requestAccount not found" ),
+    REQUEST_ACCOUNT_NOT_VALID(317, "requestAccount not valid"),
+    REQUEST_ACCOUNT_ALREADY_EXISTS(318, "requestAccount already exists"),
+    REQUEST_ACCOUNT_ID_IS_NULL(319,"requestAccount not found" );
 
 
 

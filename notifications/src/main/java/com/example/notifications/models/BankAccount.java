@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,28 +15,24 @@ import java.util.List;
 @Entity
 @Data
 
-public class BankAccount {
+public class BankAccount implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "generator")
     @SequenceGenerator(name = "generator", sequenceName = "BANK_ACCOUNT_SEQUENCE" , allocationSize = 1)
-    private  Long id;
+    private Long id;
 
-    @Column(name = "glCode")
-    private String glCode;
-    @Column(name = "name")
-    private String name ;
-    @Column(name = "accountType")
-    private  String accountType;
-    @Column(name = "accountUsage")
-    private String accountUsage;
-    @Column(name = "usedAs")
-    private String usedAs;
-    @Column(name = "balance")
-    private double balance ;
-    @Column(name = "disabled")
-    private boolean disabled ;
-    @Column(name = "manualEntriesAllowed")
-    private String manualEntriesAllowed ;
+    @Column(name = "accountNo")
+    private String accountNo;
+
+    @Column(name = "savingsProductName")
+    private String savingsProductName;
+
+     @Column(name = "summary")
+     private  Summary summary;
+
+    @Column(name = "active")
+    private boolean active=false;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -43,6 +40,5 @@ public class BankAccount {
 
     @OneToMany(mappedBy = "bankAccount",  cascade = CascadeType.ALL)
     private List<Transaction> transactions = new ArrayList<>();
-
 
 }

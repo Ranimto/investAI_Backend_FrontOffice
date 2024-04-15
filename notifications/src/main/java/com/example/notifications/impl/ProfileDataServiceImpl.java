@@ -1,10 +1,7 @@
 package com.example.notifications.impl;
 
 import com.example.notifications.Dto.ProfileDataDto;
-import com.example.notifications.Dto.UserDto;
-import com.example.notifications.Exception.ApiException;
 import com.example.notifications.Repository.ProfileDataRepo;
-import com.example.notifications.models.AppUser;
 import com.example.notifications.models.ProfileData;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.example.notifications.Exception.ErrorCode.INVESTMENT_NOT_FOUND;
 import static com.example.notifications.Exception.ErrorCode.PROFILE_DATA_NOT_FOUND;
 
 @Service

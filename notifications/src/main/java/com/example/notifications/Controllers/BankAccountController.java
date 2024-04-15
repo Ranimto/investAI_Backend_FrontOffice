@@ -25,6 +25,17 @@ public class BankAccountController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("get/{accountNo}")
+    public ResponseEntity<BankAccountDto> getBankAccountByAccountNo(@PathVariable String accountNo) {
+        Optional<BankAccountDto> bankAccountDtoOptional = bankAccountServiceImpl.getBankAccFromFineractByAccountNo(accountNo);
+        if (bankAccountDtoOptional.isPresent()) {
+            return ResponseEntity.ok(bankAccountDtoOptional.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("findFromFineract/{id}")
     public ResponseEntity<BankAccountDto> findBankAccountByIdFromFineract(@PathVariable("id") Long id) {
        BankAccountDto bankAccountDto = bankAccountServiceImpl.findBankAccByIdFromFineract(id);
@@ -69,5 +80,10 @@ public class BankAccountController {
     public ResponseEntity<List<BankAccountDto>> getBankAccountsByInvestorId(@PathVariable Long investorId) {
         List<BankAccountDto> bankAccountsDto= bankAccountServiceImpl. getBankAccountByInvestorId(investorId);
         return ResponseEntity.ok(bankAccountsDto);
+    }
+    @GetMapping("getUserActiveAccount/{userId}")
+    public  ResponseEntity<Optional<BankAccountDto>> getUserActiveAccount (@PathVariable Long userId){
+        Optional<BankAccountDto> bankAccountDto=bankAccountServiceImpl.getUserActiveAccount(userId);
+        return ResponseEntity.ok(bankAccountDto);
     }
 }

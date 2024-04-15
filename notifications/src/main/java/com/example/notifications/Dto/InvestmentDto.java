@@ -18,8 +18,10 @@ public class InvestmentDto {
     private Long companyId ;
     private String companyName ;
     private String type ;
-    private double amount ;
-    private LocalDateTime startDate ;
+    private double investmentAmount ;
+    private double currentInvestmentAmount ;
+    private  double dividendPayout ;
+    private Date startDate ;
     private  double duration ;
     private  String status ;
 }

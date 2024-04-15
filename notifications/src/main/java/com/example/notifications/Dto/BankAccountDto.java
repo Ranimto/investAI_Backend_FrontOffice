@@ -1,6 +1,5 @@
 package com.example.notifications.Dto;
-
-import jakarta.persistence.Column;
+import com.example.notifications.models.Summary;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,14 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BankAccountDto {
-    private  Long id;
-    private String glCode;
-    private  String name;
-    private String accountType ;
-    private String accountUsage;
-    private String usedAs ;
-    private double balance ;
-    private Long userId ;
-    private boolean disabled ;
-    private String manualEntriesAllowed ;
+    private Long id;
+    private String accountNo;
+    private String savingsProductName;
+    private double totalDeposits;
+   private Summary summary;
+    private boolean active;
+    private Long userId;
+
+
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Entity
@@ -21,16 +22,21 @@ public class Investment {
 
     @Column(name = "type")
     private String type ;
-    @Column(name = "amount")
-    private double amount ;
+    @Column(name = "investmentAmount")
+    private double investmentAmount ;
+    @Column(name = "currentInvestmentAmount")
+    private  double currentInvestmentAmount ;
     @Column(name = "startDate")
-    private LocalDateTime startDate ;
+    private Date startDate ;
     @Column(name = "duration")
     private  double duration ;
     @Column(name = "status")
     private  String status ;
     @Column(name = "companyName")
     private  String companyName ;
+    @Column(name = "dividendPayout")
+    private  double dividendPayout ;
+
 
     @ManyToOne
     @MapsId("userId")

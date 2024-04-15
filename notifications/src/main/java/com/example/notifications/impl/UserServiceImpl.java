@@ -1,5 +1,6 @@
 package com.example.notifications.impl;
 
+import com.example.notifications.Dto.BankAccountDto;
 import com.example.notifications.Dto.UserDto;
 import com.example.notifications.Exception.ApiException;
 import com.example.notifications.Repository.AppUserRepo;
@@ -14,17 +15,27 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.example.notifications.Exception.ErrorCode.INVESTMENT_NOT_FOUND;
-import static com.example.notifications.Exception.ErrorCode.USER_NOT_FOUND;
+import static com.example.notifications.Exception.ErrorCode.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -37,6 +48,10 @@ public class UserServiceImpl implements AppUserService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Value("${uploadImage.dir}")
+    private String uploadDirImage;
+
+    @Override
     public UserDto addUser(UserDto userDto) {
         AppUser user = modelMapper.map(userDto, AppUser.class);
         if (userRepo.countByEmail(user.getEmail().trim().toLowerCase()) > 0)
@@ -48,7 +63,7 @@ public class UserServiceImpl implements AppUserService {
     //it will be used in the register method to add just user with different emails
     public AppUser addUserr(AppUser user) {
         if (userRepo.countByEmail(user.getEmail().trim().toLowerCase()) > 0) {
-            throw new ApiException(INVESTMENT_NOT_FOUND.getMessage());
+            throw new ApiException(EMAIL_ALREADY_EXISTS.getMessage());
         }
         AppUser savedUser = userRepo.save(user);
         return savedUser;
@@ -83,7 +98,7 @@ public class UserServiceImpl implements AppUserService {
             user.setFirstname(userDto.getFirstname());
             user.setLastname(userDto.getLastname());
             user.setEmail(userDto.getEmail());
-            user.setProfession(userDto.getTitle());
+            user.setProfession(userDto.getProfession());
             user.setAddress(userDto.getAddress());
             user.setBio(userDto.getBio());
             user.setCreatedAt(userDto.getCreatedAt());
@@ -160,6 +175,41 @@ public class UserServiceImpl implements AppUserService {
         Optional<AppUser> user =userRepo.findById(id);
         return user.get().getRole()== Role.INVESTOR ;
     }
+
+    private  String saveProfileImage(MultipartFile profileImage) throws IOException {
+
+        File directory =new File(uploadDirImage) ;
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        String fileName = StringUtils.cleanPath(profileImage.getOriginalFilename());
+        String uniqueFileName =fileName ;
+        Path targetPath= Path.of(uploadDirImage,uniqueFileName);
+        Files.copy(profileImage.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
+        log.info("hello");
+        return uploadDirImage+uniqueFileName ;
+    }
+
+    public AppUser updateUserProfile(Long userId, MultipartFile profileImage) {
+        try {
+            Optional<AppUser> existingUserOptional = userRepo.findById(userId);
+
+            if (existingUserOptional.isPresent()) {
+                AppUser existingUser = existingUserOptional.get();
+                String profileImageUrl = saveProfileImage(profileImage);
+                existingUser.setImageUrl(profileImageUrl);
+                AppUser savedUser = userRepo.save(existingUser);
+                return savedUser;
+            } else {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User not  with Id: "+userId);
+            }
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error saving profile image", e);
+        }
+    }
+
+
+
 }
 
 

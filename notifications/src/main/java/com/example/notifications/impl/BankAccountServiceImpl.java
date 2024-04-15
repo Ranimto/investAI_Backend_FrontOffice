@@ -4,6 +4,7 @@ import com.example.notifications.Dto.BankAccountDto;
 import com.example.notifications.Repository.BankAccountRepo;
 import com.example.notifications.Services.BankAccountService;
 import com.example.notifications.models.BankAccount;
+import com.example.notifications.models.BankAccountResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,16 +13,18 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.notifications.Exception.ErrorCode.BANK_ACCOUNT_NOT_FOUND;
+import static com.example.notifications.Exception.ErrorCode.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -30,12 +33,12 @@ public class BankAccountServiceImpl implements BankAccountService {
     private final BankAccountRepo bankAccountRepo;
     private final ModelMapper modelMapper;
     private final RestTemplate restTemplate;
-    String ApplicationURL="https://localhost:8443";
+    String ApplicationURL = "https://localhost:8443";
 
     public List<BankAccountDto> getAllBankAccFromFineract() {
         try {
             restTemplate.setRequestFactory(new NoSSLValidationHttpRequestFactory());
-            String url = ApplicationURL+"/fineract-provider/api/v1/glaccounts";
+            String url = ApplicationURL + "/fineract-provider/api/v1/savingsaccounts";
 
             // Set the required header
             HttpHeaders headers = new HttpHeaders();
@@ -44,17 +47,17 @@ public class BankAccountServiceImpl implements BankAccountService {
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
             // Make the request with the specified headers
-            ResponseEntity<BankAccountDto[]> response = restTemplate.exchange(url, HttpMethod.GET, entity, BankAccountDto[].class);
-            BankAccountDto[] bankAccountDtos = response.getBody();
-            log.info("the response",response.getBody());
+            ResponseEntity<BankAccountResponse> response = restTemplate.exchange(url, HttpMethod.GET, entity, BankAccountResponse.class);
+            BankAccountResponse bankAccountDtos = response.getBody();
+            log.info("the response", response.getBody());
 
-            return Arrays.asList(bankAccountDtos);
+            return new ArrayList<>(bankAccountDtos.getPageItems());
         } catch (HttpClientErrorException e) {
-            log.info("the response",e);
-            System.err.println("HTTP error when retrieving data : "  + " - " + e.getStatusText());
+            log.info("the response", e);
+            System.err.println("HTTP error when retrieving data : " + " - " + e.getStatusText());
             return new ArrayList<>();
         } catch (RestClientException e) {
-            log.info("the response",e);
+            log.info("the response", e);
             System.err.println("RestClientException error during data recovery : " + e.getMessage());
             return new ArrayList<>();
         } catch (Exception e) {
@@ -64,36 +67,53 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
 
+    public Optional<BankAccountDto> getBankAccFromFineractByAccountNo(String accountNo) {
+        try {
+            List<BankAccountDto> bankAccountDtoList = getAllBankAccFromFineract();
+
+            // Filtrer la liste pour trouver le BankAccountDto avec l'accountNo donné
+            Optional<BankAccountDto> optionalBankAccountDto = bankAccountDtoList.stream()
+                    .filter(account -> account.getAccountNo().equals(accountNo))
+                    .findFirst();
+
+            return optionalBankAccountDto;
+        } catch (Exception e) {
+            log.error("Error while retrieving bank account by account number", e);
+            return Optional.empty();
+        }
+    }
+
+
+
     public BankAccountDto findBankAccByIdFromFineract(Long id) {
 
         try {
-           restTemplate.setRequestFactory(new NoSSLValidationHttpRequestFactory());
-        String url = ApplicationURL + "/fineract-provider/api/v1/glaccounts/" + id;
-        // Set the required header
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth("mifos", "password");
-        headers.set("Fineract-Platform-TenantId", "default");
-        HttpEntity<String> entity = new HttpEntity<>(headers);
+            restTemplate.setRequestFactory(new NoSSLValidationHttpRequestFactory());
+            String url = ApplicationURL + "/fineract-provider/api/v1/glaccounts/" + id;
+            // Set the required header
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBasicAuth("mifos", "password");
+            headers.set("Fineract-Platform-TenantId", "default");
+            HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<BankAccountDto> response = restTemplate.exchange(url, HttpMethod.GET, entity, BankAccountDto.class);
-        BankAccountDto bankAccountDto= response.getBody();
-        log.info("the response",response.getBody());
+            ResponseEntity<BankAccountDto> response = restTemplate.exchange(url, HttpMethod.GET, entity, BankAccountDto.class);
+            BankAccountDto bankAccountDto = response.getBody();
+            log.info("the response", response.getBody());
 
-        return bankAccountDto;
+            return bankAccountDto;
 
-    } catch (HttpClientErrorException e) {
-        System.err.println("HTTP error when retrieving data : "  + " - " + e.getStatusText());
+        } catch (HttpClientErrorException e) {
+            System.err.println("HTTP error when retrieving data : " + " - " + e.getStatusText());
             return null;
-    } catch (RestClientException e) {
-        System.err.println("RestClientException error during data recovery : " + e.getMessage());
+        } catch (RestClientException e) {
+            System.err.println("RestClientException error during data recovery : " + e.getMessage());
             return null;
-    } catch (Exception e) {
-        e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
+        }
+
     }
-
-    }
-
 
 
     public List<BankAccountDto> getAllBankAcc() {
@@ -115,15 +135,8 @@ public class BankAccountServiceImpl implements BankAccountService {
     public BankAccountDto UpdateBankAccount(BankAccountDto bankAccountDto) {
         BankAccount bankAccount = bankAccountRepo.findById(bankAccountDto.getId()).orElse(null);
         if (bankAccount != null) {
-
-            bankAccount.setName(bankAccountDto.getName());
-            bankAccount.setDisabled(bankAccountDto.isDisabled());
-            bankAccount.setAccountType(bankAccountDto.getAccountType());
-            bankAccount.setBalance(bankAccountDto.getBalance());
-            bankAccount.setAccountUsage(bankAccountDto.getAccountUsage());
-            bankAccount.setManualEntriesAllowed(bankAccountDto.getManualEntriesAllowed());
-            bankAccount.setUsedAs(bankAccountDto.getUsedAs());
-
+            bankAccount.setAccountNo(bankAccountDto.getAccountNo());
+            bankAccount.setActive(bankAccountDto.isActive());
             BankAccount updatedBankAcc = bankAccountRepo.save(bankAccount);
             return modelMapper.map(updatedBankAcc, BankAccountDto.class);
         } else {
@@ -138,11 +151,17 @@ public class BankAccountServiceImpl implements BankAccountService {
         }
     }
 
-    public List<BankAccountDto> getBankAccountByInvestorId(Long id){
-        List<BankAccount> bankAccounts = bankAccountRepo.findByUserId(id);
-        return bankAccounts.stream().map(u-> modelMapper.map(u, BankAccountDto.class)).collect(Collectors.toList()) ;
+    public List<BankAccountDto> getBankAccountByInvestorId(Long userId) {
+        List<BankAccount> bankAccounts = bankAccountRepo.findByUserId(userId);
+        return bankAccounts.stream().map(u -> modelMapper.map(u, BankAccountDto.class)).collect(Collectors.toList());
     }
 
+    public Optional<BankAccountDto> getUserActiveAccount(Long userId){
+        if (userId==0) throw new EntityNotFoundException(USER_NOT_FOUND.getMessage());
+        List<BankAccountDto> bankAccountDtoList= getBankAccountByInvestorId(userId);
+        return   bankAccountDtoList.stream().filter(account-> account.isActive()).findFirst();
+
+    }
 
 
 }

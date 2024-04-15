@@ -1,7 +1,6 @@
 package com.example.notifications.impl;
 
 import com.example.notifications.Dto.InvestmentDto;
-import com.example.notifications.Exception.ErrorCode;
 import com.example.notifications.Repository.InvestmentRepo;
 import com.example.notifications.Services.InvestmentService;
 import com.example.notifications.models.InvestId;
@@ -61,7 +60,9 @@ public class InvestmentServiceImpl implements InvestmentService {
 
         Investment investment = investmentRepo.findByInvestId( userId,companyId).orElse(null);
         if (investment != null) {
-            investment.setAmount(investmentDto.getAmount());
+            investment.setInvestmentAmount(investmentDto.getInvestmentAmount());
+            investment.setCurrentInvestmentAmount(investmentDto.getCurrentInvestmentAmount());
+            investment.setDividendPayout(investmentDto.getDividendPayout());
             investment.setDuration(investmentDto.getDuration());
             investment.setStartDate(investmentDto.getStartDate());
             investment.setStatus(investmentDto.getStatus());

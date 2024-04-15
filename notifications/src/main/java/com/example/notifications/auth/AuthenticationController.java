@@ -1,7 +1,5 @@
 package com.example.notifications.auth;
 
-import com.example.notifications.Dto.UserDto;
-import com.example.notifications.Exception.ApiException;
 import com.example.notifications.Repository.AppUserRepo;
 
 import com.example.notifications.impl.UserServiceImpl;

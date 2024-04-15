@@ -17,13 +17,10 @@ public interface AppUserRepo extends JpaRepository<AppUser,Long> {
     // Méthode automatiquement générée par Spring Data JPA
     Integer countByEmail(String email);
 
-//    @Transactional
-//    @Modifying
-//    @Query("UPDATE AppUser u SET u.enabled = true  WHERE u.id = ?1")
-//    public void enable(Long id);
-
 
     @Transactional
     @Query("SELECT u FROM AppUser u WHERE u.verificationCode = ?1")
      AppUser findByVerificationCode(String code);
+
+
 }

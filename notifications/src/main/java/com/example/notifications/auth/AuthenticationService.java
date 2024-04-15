@@ -79,7 +79,7 @@ public class AuthenticationService {
 
         var savedUser = userService.addUserr(user);
         var jwtToken = jwtService.generateToken(user);
-        // var refreshToken = jwtService.generateRefreshToken(user);
+         var refreshToken = jwtService.generateRefreshToken(user);
 
         saveUserToken(savedUser, jwtToken);
         //send verification code
@@ -103,7 +103,7 @@ public class AuthenticationService {
 
         //condition ??
         var jwtToken = jwtService.generateToken(user);
-        //var refreshToken = jwtService.generateRefreshToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
         return AuthenticationResponse.builder()

@@ -20,10 +20,11 @@ public class UserDto {
     private String email;
     private String address;
     private double phone;
-    private String title;
     private String bio ;
     private double postCode;
+    private String profession;
     private String city;
+    private String nationality;
     private String imageUrl;
     private String enabled;
     private LocalDateTime createdAt;
