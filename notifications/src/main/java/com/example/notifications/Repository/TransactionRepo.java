@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TransactionRepo extends JpaRepository<Transaction,Long> {
+public interface TransactionRepo extends JpaRepository<Transaction,Integer> {
 
     @Transactional
     @Query("SELECT t FROM Transaction t JOIN t.bankAccount b JOIN b.user u WHERE u.id = :userId")
-    Optional<List<Transaction>> findTransactionsByUserId(Long userId);
+    Optional<List<Transaction>> findTransactionsByUserId(Integer userId);
 }

@@ -45,4 +45,10 @@ public class StockDataController {
     }
 
 
+//    @GetMapping("/dailyAdjusted/{symbol}/{abrv}")
+//    public String  fetchAndStoreDataDailyAdjusted(@PathVariable String symbol,@PathVariable String abrv) {
+//        String stockData = stockDataService.fetchAndStoreDataDailyAdjusted(symbol,abrv);
+//        return stockData;
+//    }
+
 }

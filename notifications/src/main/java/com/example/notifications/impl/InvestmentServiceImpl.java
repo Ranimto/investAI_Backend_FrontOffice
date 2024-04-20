@@ -62,7 +62,6 @@ public class InvestmentServiceImpl implements InvestmentService {
         if (investment != null) {
             investment.setInvestmentAmount(investmentDto.getInvestmentAmount());
             investment.setCurrentInvestmentAmount(investmentDto.getCurrentInvestmentAmount());
-            investment.setDividendPayout(investmentDto.getDividendPayout());
             investment.setDuration(investmentDto.getDuration());
             investment.setStartDate(investmentDto.getStartDate());
             investment.setStatus(investmentDto.getStatus());

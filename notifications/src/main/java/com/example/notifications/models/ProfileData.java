@@ -56,7 +56,7 @@ public class ProfileData {
     private String sourceOfFunds;
 
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
     private AppUser user;
 }

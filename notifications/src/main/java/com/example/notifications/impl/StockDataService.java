@@ -1,5 +1,6 @@
 package com.example.notifications.impl;
 
+import com.example.notifications.Services.StockData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,14 +12,16 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class StockDataService {
+public class StockDataService  implements StockData {
 
     private static final String API_KEY = "7B2VWMKU9SVM59DQ";
+    //"Intraday (5min) open, high, low, close prices and volume
     private static final String API_URL = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=%s&interval=5min&apikey=%s";
     private static final String API_URL2 = "https://alphavantageapi.co/timeseries/running_analytics?SYMBOLS=%s,%s&RANGE=2month&INTERVAL=DAILY&OHLC=close&WINDOW_SIZE=20&CALCULATIONS=%s&apikey=%s";
     private static final String API_URL3 = "https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=AAPL&apikey=%s";
     private static final String API_URL4 = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=%s&apikey=%s";
     private static final String API_URL5 = "https://alphavantageapi.co/timeseries/analytics?SYMBOLS=%s,%s,%s,%s,%s&RANGE=2024-03-30&RANGE=2024-04-02&INTERVAL=DAILY&OHLC=close&CALCULATIONS=MEAN,STDDEV,CORRELATION&apikey=7B2VWMKU9SVM59DQ";
+    private static final String API_URL6 = "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&symbol=%s&apikey=7B2VWMKU9SVM59DQ";
     private static final String TIMESTAMP_KEY_PREFIX = "timestamp_";
 
     @Autowired
@@ -27,7 +30,6 @@ public class StockDataService {
     // Include timestamp tracking for each stock symbol in Redis
     // This allows to determine whether a particular stock price needs to be updated based on the timestamp compared to the current time
 
-    //
     public void fetchAndStoreStockData(String symbol) {
         String apiUrl = String.format(API_URL,symbol, API_KEY);
         RestTemplate restTemplate = new RestTemplate();
@@ -87,7 +89,7 @@ public class StockDataService {
         return redisTemplate.opsForValue().get(symbol+symbol2+calculation);
     }
 
-    public String fetchAnalyticDataAndStore(String symbol ,String symbol2  , String calculation) {
+     public String fetchAnalyticDataAndStore(String symbol ,String symbol2  , String calculation) {
         String stockData = getStockDataAnalytic(symbol, symbol2, calculation);
 
         // Check if data exists in Redis
@@ -126,9 +128,7 @@ public class StockDataService {
         }
     }
 
-    public String getNewsData(String symbol) {
-        return redisTemplate.opsForValue().get(symbol+"_News");
-    }
+
 
     public String fetchNewsData(String symbol) {
         String stockData = getStockData(symbol+"_News");
@@ -145,7 +145,8 @@ public class StockDataService {
 
         if (stockData == null || storedTimestamp == null || storedTimestamp.plusMinutes(5).isBefore(currentTimestamp)) {
             fetchAndStoreNewsData(symbol);
-            stockData = getNewsData(symbol);
+            //stockData = getNewsData(symbol);
+            stockData = getStockData(symbol+"_News");
         }
         return stockData;
     }
@@ -246,4 +247,49 @@ public class StockDataService {
         }
         return stockData;
     }
+
+//    private void fetchAndStoreGenericData(String symbol, String apiUrlKey, String responseCheckString) {
+//        String apiUrl = String.format(apiUrlKey, symbol, API_KEY);
+//        log.info(apiUrl);
+//        RestTemplate restTemplate = new RestTemplate();
+//        String response = restTemplate.getForObject(apiUrl, String.class);
+//
+//        if (response != null && !response.contains(responseCheckString)) {
+//            LocalDateTime timestamp = LocalDateTime.now();
+//            String timestampKey = TIMESTAMP_KEY_PREFIX + symbol;
+//            redisTemplate.opsForValue().set(timestampKey, timestamp.toString());
+//            redisTemplate.opsForValue().set(symbol, response);
+//        }
+//    }
+//
+//
+//    public String getData(String symbol) {
+//        return redisTemplate.opsForValue().get(symbol);
+//    }
+//
+//    public String fetchDataAndStore(String symbol ,String abrv, String apiUrlKey, String responseCheckString) {
+//        String data = getData(symbol+abrv);
+//
+//        if (data != null) {
+//            return data;
+//        }
+//        String timestampKey = TIMESTAMP_KEY_PREFIX + symbol;
+//        String storedTimestampStr = redisTemplate.opsForValue().get(timestampKey);
+//        LocalDateTime storedTimestamp = storedTimestampStr != null ? LocalDateTime.parse(storedTimestampStr) : null;
+//        LocalDateTime currentTimestamp = LocalDateTime.now();
+//
+//        if (data == null || storedTimestamp == null || storedTimestamp.plusMinutes(5).isBefore(currentTimestamp)) {
+//
+//            fetchAndStoreGenericData(symbol, apiUrlKey, responseCheckString);
+//            data = getData(symbol);
+//        }
+//        return data;
+//    }
+//    public String fetchAndStoreDataDailyAdjusted(String symbol,String abrv ) {
+//       return fetchDataAndStore(symbol,abrv, API_URL6, "API key is either invalid");
+//    }
+
+
+
+
 }

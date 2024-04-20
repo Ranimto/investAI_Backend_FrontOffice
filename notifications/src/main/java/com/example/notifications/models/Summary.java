@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class    Summary {
+public class Summary {
 
     private double totalDeposits;
     private double totalInterestEarned;

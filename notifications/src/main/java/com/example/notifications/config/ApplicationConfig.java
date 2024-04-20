@@ -1,6 +1,7 @@
 package com.example.notifications.config;
 
 import com.example.notifications.Repository.AppUserRepo;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -62,5 +63,6 @@ public class ApplicationConfig {
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
+
 
 }

@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TransactionService {
+
+     TransactionDto addTransactionToFineract(String fromAccountNo, String toAccountNo, double amount);
      List<TransactionDto> getAllTransactions();
-     Optional<TransactionDto> findTransactionById(Long id);
+     Optional<TransactionDto> findTransactionById(Integer id);
      TransactionDto addTransaction(TransactionDto transactionDto);
-    void DeleteById(Long id);
+    void DeleteById(Integer id);
 }

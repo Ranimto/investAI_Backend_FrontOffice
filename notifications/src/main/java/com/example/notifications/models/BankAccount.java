@@ -30,15 +30,18 @@ public class BankAccount implements Serializable {
      @Column(name = "summary")
      private  Summary summary;
 
+
     @Column(name = "active")
     private boolean active=false;
-
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private AppUser user;
 
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
+
     @OneToMany(mappedBy = "bankAccount",  cascade = CascadeType.ALL)
     private List<Transaction> transactions = new ArrayList<>();
-
 }

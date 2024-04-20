@@ -2,6 +2,7 @@ package com.example.notifications.impl;
 
 import com.example.notifications.Dto.ProfileDataDto;
 import com.example.notifications.Repository.ProfileDataRepo;
+import com.example.notifications.Services.ProfileDataService;
 import com.example.notifications.models.ProfileData;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import static com.example.notifications.Exception.ErrorCode.PROFILE_DATA_NOT_FOU
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ProfileDataServiceImpl {
+public class ProfileDataServiceImpl implements ProfileDataService {
 
     private final ProfileDataRepo profileDataRepo ;
     private final ModelMapper modelMapper ;

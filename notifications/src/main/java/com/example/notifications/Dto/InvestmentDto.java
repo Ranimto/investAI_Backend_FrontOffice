@@ -1,5 +1,6 @@
 package com.example.notifications.Dto;
 
+import com.example.notifications.models.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,8 +21,7 @@ public class InvestmentDto {
     private String type ;
     private double investmentAmount ;
     private double currentInvestmentAmount ;
-    private  double dividendPayout ;
     private Date startDate ;
     private  double duration ;
-    private  String status ;
+    private Status status = Status.IN_PROGRESS;
 }

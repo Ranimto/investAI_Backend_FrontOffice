@@ -1,6 +1,7 @@
 package com.example.notifications.impl;
 
 import com.example.notifications.Dto.BankAccountDto;
+import com.example.notifications.Dto.ClientDto;
 import com.example.notifications.Dto.RequestAccountDto;
 import com.example.notifications.Repository.RequestAccountRepo;
 import com.example.notifications.models.RequestAccount;
@@ -22,6 +23,7 @@ import static com.example.notifications.Exception.ErrorCode.REQUEST_ACCOUNT_ID_I
 public class RequestAccountServiceImpl {
     private  final RequestAccountRepo requestAccountRepo ;
     private final BankAccountServiceImpl bankAccountService ;
+    private  final  ClientServiceImpl clientService ;
     private  final ModelMapper modelMapper ;
     private final RestTemplate restTemplate;
     String ApplicationURL = "https://localhost:8443";
@@ -37,6 +39,13 @@ public class RequestAccountServiceImpl {
         if (accountNo != null) {
             BankAccountDto bankAccountDto = checkAccountExistence(accountNo);
             if (bankAccountDto != null) {
+
+                //save Client
+                Long clientId =bankAccountDto.getClientId();
+                ClientDto clientDto=clientService.getClientByIdFromFineract(clientId);
+                clientService.saveClient(clientDto);
+
+                //save BankAccount
                 bankAccountDto.setUserId(requestAccountDto.getUserId());
                 bankAccountService.addBankAccount(bankAccountDto);
                 requestAccountDto.setStatus("Approved");

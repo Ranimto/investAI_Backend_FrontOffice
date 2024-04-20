@@ -14,9 +14,8 @@ public class BankAccountDto {
     private String accountNo;
     private String savingsProductName;
     private double totalDeposits;
-   private Summary summary;
+    private Summary summary;
     private boolean active;
+    private  Long clientId;
     private Long userId;
-
-
 }

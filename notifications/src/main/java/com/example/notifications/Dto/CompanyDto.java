@@ -24,4 +24,5 @@ public class CompanyDto {
     private  double profitabilityRatio ;
     private  double RIB ;
     private  double Balance ;
+    private double accountType;
 }

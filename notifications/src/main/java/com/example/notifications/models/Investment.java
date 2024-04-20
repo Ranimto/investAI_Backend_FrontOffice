@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -30,12 +29,13 @@ public class Investment {
     private Date startDate ;
     @Column(name = "duration")
     private  double duration ;
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private  String status ;
+    private Status status = Status.IN_PROGRESS;
+
     @Column(name = "companyName")
     private  String companyName ;
-    @Column(name = "dividendPayout")
-    private  double dividendPayout ;
 
 
     @ManyToOne
